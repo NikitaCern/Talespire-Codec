@@ -44,11 +44,12 @@ namespace Talespire_Converter
                 if (rawDataAssets == null) rawDataAssets = EncodeAsset(entry);
                 else rawDataAssets = rawDataAssets.Concat(EncodeAsset(entry)).ToArray(); 
 
-                if (rawDataPositions == null) rawDataPositions = EncodeAssetPositions(entry.instances);
-                else rawDataPositions = rawDataPositions.Concat(EncodeAssetPositions(entry.instances)).ToArray();
+                if (rawDataPositions == null) rawDataPositions = EncodeAssetPosition(entry.instances);
+                else rawDataPositions = rawDataPositions.Concat(EncodeAssetPosition(entry.instances)).ToArray();
             }
 
-            byte[] rawData = header.Concat(rawDataAssets).Concat(rawDataPositions).ToArray();
+            byte[] rawData = header.Concat(rawDataAssets).Concat(rawDataPositions).Concat(new byte[] { 0x00, 0x00}).ToArray();
+
             byte[] compressed = Compress(rawData);
             string output = $"```{Convert.ToBase64String(compressed)}```";
 
@@ -117,24 +118,21 @@ namespace Talespire_Converter
             return uuid.Concat(instanceCount).ToArray();
         }
 
-        private byte[] EncodeAssetPositions(List<Position> instances)
+        public static byte[] EncodeAssetPosition(IEnumerable<Position> positions)
         {
-            byte[] output = null;
+            List<byte> result = new List<byte>();
 
-            foreach (Position instance in instances)
+            foreach (Position position in positions)
             {
-                ulong position = 0;
+                ulong currentData = ((ulong)position.x)
+                    | (((ulong)position.z) << 18)
+                    | (((ulong)position.y) << 36)
+                    | (((ulong)position.r) << 54);
 
-                position |= (ulong) (instance.x << 0);
-                position |= (ulong) (instance.z << 18);
-                position |= (ulong) (instance.y << 36);
-                position |= (ulong) (instance.r << 54);
-
-                if (output == null) output = BitConverter.GetBytes(position);
-                else output = output.Concat(BitConverter.GetBytes(position)).ToArray();
-
+                result.AddRange(BitConverter.GetBytes(currentData));
             }
-            return output;
+
+            return result.ToArray();
         }
 
         public static byte[] Decompress(byte[] input)
@@ -151,10 +149,13 @@ namespace Talespire_Converter
         public static byte[] Compress(byte[] input)
         {
             using (var output = new MemoryStream())
-            using (var gzip = new GZipStream(output, CompressionMode.Compress))
             {
-                gzip.Write(input, 0, input.Length);
-                gzip.Flush();
+                using (var gzip = new GZipStream(output, CompressionMode.Compress))
+                {
+                    gzip.Write(input, 0, input.Length);
+                    gzip.Flush();
+                    
+                }
                 return output.ToArray();
             }
         }
