@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using System.Runtime.Remoting.Messaging;
 using System.Linq;
-using System.Globalization;
-using System.Net.NetworkInformation;
 
-namespace Talespire_Converter
+namespace Talespire_Codec
 {
     public class Codec
     {
+        private static byte[] headerBytes = { 0xCE, 0xFA, 0xCE, 0xD1, 0x02, 0x00 };
         private static int listEntryLength = 20;
         private static int positionEntryLength = 8;
         private static Regex rx = new Regex(@"^```\S*```$");
@@ -35,8 +32,8 @@ namespace Talespire_Converter
 
         public string Encode( List<Asset> data) {
 
-            byte[] header = new byte[] { 0xCE, 0xFA, 0xCE, 0xD1, 0x02, 0x00 };
-            header = header.Concat(BitConverter.GetBytes(data.Count)).ToArray();
+            byte[] header = headerBytes.Concat(BitConverter.GetBytes(data.Count)).ToArray();
+
             byte[] rawDataAssets = null;
             byte[] rawDataPositions = null;
 
@@ -55,7 +52,6 @@ namespace Talespire_Converter
 
             return output;
         }
-
 
         private List<Asset> PopulateAssetList(byte[] data, int headerLength, int uniqueAssetCount)
         {

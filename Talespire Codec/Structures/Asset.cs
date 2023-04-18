@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Talespire_Converter
+namespace Talespire_Codec
 {
     [Serializable]
     public class Asset

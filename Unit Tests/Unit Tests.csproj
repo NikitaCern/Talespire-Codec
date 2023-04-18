@@ -80,9 +80,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Talespire Converter\Talespire Converter.csproj">
+    <ProjectReference Include="..\Talespire Codec\Talespire Codec.csproj">
       <Project>{f0f4fc1e-9aae-4651-8c26-da4f47bf0b35}</Project>
-      <Name>Talespire Converter</Name>
+      <Name>Talespire Codec</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

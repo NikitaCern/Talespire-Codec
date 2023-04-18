@@ -1,7 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Text.Json;
-using Talespire_Converter;
+using Talespire_Codec;
 
 namespace Unit_Tests
 {
