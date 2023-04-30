@@ -60,10 +60,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Bounds.cs" />
+    <Compile Include="Classes\Float3.cs" />
+    <Compile Include="JsonReader.cs" />
     <Compile Include="Structures\Position.cs" />
     <Compile Include="Codec.cs" />
     <Compile Include="Structures\Asset.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Classes\Tile.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="index.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
