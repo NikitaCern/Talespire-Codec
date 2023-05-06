@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Talespire_Codec
 {
     [Serializable]
-    public class Asset
+    public class CodecAsset
     {
         public string uuid { get; set; }
         public int instanceCount { get; set; }

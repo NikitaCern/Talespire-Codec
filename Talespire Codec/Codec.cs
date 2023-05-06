@@ -14,7 +14,7 @@ namespace Talespire_Codec
         private static int positionEntryLength = 8;
         private static Regex rx = new Regex(@"^```\S*```$");
 
-        public List<Asset> Decode( string rawData )
+        public List<CodecAsset> Decode( string rawData )
         {
             if (string.IsNullOrEmpty(rawData)) throw new ArgumentNullException("String to decode cant be null!");
             if (!rx.IsMatch(rawData)) throw new FormatException("String doesnt match format!");
@@ -25,12 +25,12 @@ namespace Talespire_Codec
             byte[] header = data.Take(10).ToArray();
 
             int uniqueAssetCount = header[6];
-            List<Asset> assetList = PopulateAssetList(data, header.Length, uniqueAssetCount);
+            List<CodecAsset> assetList = PopulateAssetList(data, header.Length, uniqueAssetCount);
 
             return assetList;
         }
 
-        public string Encode( List<Asset> data) {
+        public string Encode( List<CodecAsset> data) {
 
             byte[] header = headerBytes.Concat(BitConverter.GetBytes(data.Count)).ToArray();
 
@@ -53,16 +53,16 @@ namespace Talespire_Codec
             return output;
         }
 
-        private List<Asset> PopulateAssetList(byte[] data, int headerLength, int uniqueAssetCount)
+        private List<CodecAsset> PopulateAssetList(byte[] data, int headerLength, int uniqueAssetCount)
         {
-            List<Asset> assetList = new List<Asset>();
+            List<CodecAsset> assetList = new List<CodecAsset>();
 
             int position = 0 + headerLength;
             int assetPositionDataOffset = position + uniqueAssetCount * listEntryLength;
 
             for (int i = 0; i < uniqueAssetCount; i++)
             {
-                Asset asset = DecodeAsset(data.Skip(position).Take(listEntryLength));
+                CodecAsset asset = DecodeAsset(data.Skip(position).Take(listEntryLength));
 
                 var assetDataAmount = asset.instanceCount * positionEntryLength;
                 asset.instances = DecodeAssetPosition(data.Skip(assetPositionDataOffset).Take(assetDataAmount).ToArray());
@@ -74,9 +74,9 @@ namespace Talespire_Codec
             return assetList;
         }
 
-        private Asset DecodeAsset(IEnumerable<byte> data)
+        private CodecAsset DecodeAsset(IEnumerable<byte> data)
         {
-            Asset asset = new Asset();
+            CodecAsset asset = new CodecAsset();
 
             asset.uuid = new Guid(data.Take(16).ToArray()).ToString();
             asset.instanceCount = BitConverter.ToUInt16(data.Skip(16).Take(4).ToArray(), 0);
@@ -106,7 +106,7 @@ namespace Talespire_Codec
             return positions;
         }
 
-        private byte[] EncodeAsset(Asset entry)
+        private byte[] EncodeAsset(CodecAsset entry)
         {
             byte[] uuid = Guid.Parse(entry.uuid).ToByteArray();
             byte[] instanceCount = BitConverter.GetBytes(entry.instanceCount);

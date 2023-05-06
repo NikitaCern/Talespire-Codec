@@ -4,7 +4,7 @@ using System;
 namespace Talespire_Converter
 {
     [Serializable]
-    public class Float3
+    public class Float4
     {
         [JsonProperty("x")]
         public float X { get; set; }
@@ -14,6 +14,9 @@ namespace Talespire_Converter
 
         [JsonProperty("z")]
         public float Z { get; set; }
+
+        [JsonProperty("w")]
+        public float W { get; set; }
 
     }
 }
