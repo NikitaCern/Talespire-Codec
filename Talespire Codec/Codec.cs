@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO.Compression;
 using System.IO;
-using System.Text.RegularExpressions;
+using System.IO.Compression;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Talespire_Codec
 {
@@ -14,7 +14,7 @@ namespace Talespire_Codec
         private static int positionEntryLength = 8;
         private static Regex rx = new Regex(@"^```\S*```$");
 
-        public List<CodecAsset> Decode( string rawData )
+        public List<CodecAsset> Decode(string rawData)
         {
             if (string.IsNullOrEmpty(rawData)) throw new ArgumentNullException("String to decode cant be null!");
             if (!rx.IsMatch(rawData)) throw new FormatException("String doesnt match format!");
@@ -30,22 +30,24 @@ namespace Talespire_Codec
             return assetList;
         }
 
-        public string Encode( List<CodecAsset> data) {
+        public string Encode(List<CodecAsset> data)
+        {
 
             byte[] header = headerBytes.Concat(BitConverter.GetBytes(data.Count)).ToArray();
 
             byte[] rawDataAssets = null;
             byte[] rawDataPositions = null;
 
-            foreach (var entry in data) {
+            foreach (var entry in data)
+            {
                 if (rawDataAssets == null) rawDataAssets = EncodeAsset(entry);
-                else rawDataAssets = rawDataAssets.Concat(EncodeAsset(entry)).ToArray(); 
+                else rawDataAssets = rawDataAssets.Concat(EncodeAsset(entry)).ToArray();
 
                 if (rawDataPositions == null) rawDataPositions = EncodeAssetPosition(entry.instances);
                 else rawDataPositions = rawDataPositions.Concat(EncodeAssetPosition(entry.instances)).ToArray();
             }
 
-            byte[] rawData = header.Concat(rawDataAssets).Concat(rawDataPositions).Concat(new byte[] { 0x00, 0x00}).ToArray();
+            byte[] rawData = header.Concat(rawDataAssets).Concat(rawDataPositions).Concat(new byte[] { 0x00, 0x00 }).ToArray();
 
             byte[] compressed = Compress(rawData);
             string output = $"```{Convert.ToBase64String(compressed)}```";
@@ -96,10 +98,10 @@ namespace Talespire_Codec
                 var currentData = BitConverter.ToUInt64(data.Skip(i * positionEntryLength).Take(8).ToArray(), 0);
 
                 Position position = new Position();
-                position.x = (ushort) (currentData >> 0);
-                position.z = (ushort) (currentData >> 18);
-                position.y = (ushort) (currentData >> 36);
-                position.r = (byte)   (currentData >> 54);
+                position.x = (ushort)(currentData >> 0);
+                position.z = (ushort)(currentData >> 18);
+                position.y = (ushort)(currentData >> 36);
+                position.r = (byte)(currentData >> 54);
                 positions.Add(position);
             }
 
@@ -150,7 +152,7 @@ namespace Talespire_Codec
                 {
                     gzip.Write(input, 0, input.Length);
                     gzip.Flush();
-                    
+
                 }
                 return output.ToArray();
             }
