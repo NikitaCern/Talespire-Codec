@@ -38,5 +38,10 @@ namespace Talespire_Converter
         [JsonProperty("Icon")]
         public Icon Icon { get; set; }
 
+        public override string ToString()
+        {
+            return this.Name;
+        }
+
     }
 }
